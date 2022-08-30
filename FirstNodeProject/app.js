@@ -1,11 +1,22 @@
 const express = require("express");
 const multer = require("multer");
+
 const app = express();
 const port = 9000;
 
-app.use(express.json());
-const upload = multer({ dest: '/uploaded/' });
+const storage = multer.diskStorage({
+    destination: (req, file, callbackFunc) => {
+        callbackFunc(null, 'uploaded/')
+    },
+    filename: (req, file, callbackFunc) => {
+        console.log(file);
+        callbackFunc(null, file.originalname)
+    }
+})
 
+const upload = multer({ storage: storage });
+
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/static', express.static('public'));
